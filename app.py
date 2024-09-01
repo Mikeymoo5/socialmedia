@@ -30,8 +30,8 @@ def signup_page():
         try:
             cursor.execute(f'''SELECT username FROM users WHERE username={usr} AND password={password} ''')
         except: 
-            return "<p>Account already exists</p>"
-        cursor.execute(f'''INSERT INTO users VALUES ({usr}, {password}))''')
+            cursor.execute(f'''INSERT INTO users (username, password)VALUES ({usr}, {password})''')
+        return "<p>Account already exists</p>"
     return render_template("form.html", page_title="Signup", form=form)
 
 @app.route("/login", methods=["GET", "POST"])
