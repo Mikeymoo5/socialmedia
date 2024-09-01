@@ -20,14 +20,32 @@ def home_page():
     return render_template("index.html", page_title="Home")
     # return "<p>Welcome!</p>"
 
-@app.route("/signup")
+@app.route("/signup", methods=['GET', 'POST'])
 def signup_page():
     form = GenericUserForm()
+    if form.validate_on_submit():
+        usr = form.usr.data
+        password = form.password.data
+        cursor.execute(f'''SELECT * FROM users WHERE username={usr} AND password={password} ''')
+        if cursor.rowcount == 1:
+            return "<p>LOGGED IN</p>"
+        else:
+            return "<p>Account name or password is incorrect</p>"
     return render_template("form.html", page_title="Signup", form=form)
 
-@app.route("/login")
+@app.route("/login", methods=["GET", "POST"])
 def login_page():
     form = GenericUserForm()
+    if form.validate_on_submit():
+        usr = form.usr.data
+        password = form.password.data
+        cursor = sqlite3.connect("database.db").cursor()
+        cursor.execute(f'''SELECT username FROM users WHERE username={usr} AND password={password} ''')
+        if cursor.rowcount == 1:
+            return "<p>LOGGED IN</p>"
+        else:
+            return "<p>Account name or password is incorrect</p>"
+
     return render_template("form.html", page_title="Login", form=form)
 
 class GenericUserForm(FlaskForm):
